@@ -29,6 +29,42 @@ class Tree {
         return [...new Set(sortedArray)];
     }
 
+    insert(value) {
+        let node = this.root;
+        let lastNode = null;
+        while (node !== null) {
+            if (node.data === value) return "Value Already Present";
+            if (value > node.data) {
+                lastNode = node;
+                node = node.right;
+            } else {
+                lastNode = node;
+                node = node.left;
+            }
+        }
+
+        if (value > lastNode.data) {
+            lastNode.right = new Node(value);
+        } else {
+            lastNode.left = new Node(value);
+        }
+
+        return "Successfully Added Value to Tree";
+    }
+
+    find(value) {
+        let node = this.root;
+        while (node !== null) {
+            if (node.data === value) return node;
+            if (value > node.data) {
+                node = node.right;
+            } else {
+                node = node.left;
+            }
+        }
+        return null;
+    }
+
     prettyPrint(node = this.root, prefix = "", isLeft = true) {
         if (node === null) {
             return;
@@ -48,12 +84,10 @@ class Tree {
                 true
             );
         }
-    };
+    }
 }
 
 const bst = new Tree([1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324]);
 
-bst.prettyPrint()
-
-
-
+console.log(bst.insert(8.5));
+bst.prettyPrint();
