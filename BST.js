@@ -29,18 +29,20 @@ class Tree {
         return [...new Set(sortedArray)];
     }
 
+    // my Implimentation
     insert(value) {
+        if (!this.root) {
+            this.root = new Node(value);
+            return "Successfully Added Value to Tree";
+        }
+
         let node = this.root;
         let lastNode = null;
+
         while (node !== null) {
             if (node.data === value) return "Value Already Present";
-            if (value > node.data) {
-                lastNode = node;
-                node = node.right;
-            } else {
-                lastNode = node;
-                node = node.left;
-            }
+            lastNode = node;
+            node = value > node.data ? node.right : node.left;
         }
 
         if (value > lastNode.data) {
@@ -50,6 +52,30 @@ class Tree {
         }
 
         return "Successfully Added Value to Tree";
+    }
+
+    // Help from Neetcode : https://www.youtube.com/watch?v=LFzAoJJt92M
+    delete(value, root = this.root) {
+        if (!root) return root;
+
+        if (value > root.data) {
+            root.right = this.delete(value, root.right);
+        } else if (value < root.data) {
+            root.left = this.delete(value, root.left);
+        } else {
+            if (!root.left) return root.right;
+            if (!root.right) return root.left;
+
+            let current = root.right;
+            while (current.left) {
+                current = current.left;
+            }
+
+            root.data = current.data;
+            root.right = this.delete(root.data, root.right);
+        }
+
+        return root;
     }
 
     find(value) {
@@ -63,6 +89,22 @@ class Tree {
             }
         }
         return null;
+    }
+
+    levelOrderForEach(callback) {
+        if (typeof callback !== "function") {
+            throw new Error("Callback function is required");
+        }
+        if (!this.root) return;
+        let queue = [];
+        queue.push(this.root);
+        // while there is atleast one discovered node
+        while (queue.length !== 0) {
+            let current = queue.shift();
+            callback(current);
+            if (current.left !== null) queue.push(current.left);
+            if (current.right !== null) queue.push(current.right);
+        }
     }
 
     prettyPrint(node = this.root, prefix = "", isLeft = true) {
@@ -89,5 +131,10 @@ class Tree {
 
 const bst = new Tree([1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324]);
 
-console.log(bst.insert(8.5));
-bst.prettyPrint();
+// console.log(bst.insert(8.5));
+// bst.prettyPrint();
+// console.log(bst.delete(8));
+bst.prettyPrint()
+bst.levelOrderForEach((val) => {
+    console.log(val.data);
+});
